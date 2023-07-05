@@ -1,0 +1,21 @@
+{
+    "analysis_parent_dir": "/path/to/analysis_by_run",
+    "analysis_work_dir": "/path/to/work-auto-pangolin",
+    "analysis_output_dir": "/path/to/pangolin_lineages_by_date",
+    "notification_email_addresses": [
+	"someone@example.org"
+    ],
+    "send_notification_emails": false,
+    "analysis_time": "07:00",
+    "pipelines": [
+	{
+	    "pipeline_name": "BCCDC-PHL/pangolin-nf",
+	    "pipeline_version": "v0.4.0",
+	    "pipeline_parameters": {
+		"analysis_parent_dir": null,
+		"outdir": null
+	    }
+	}
+    ]
+    
+}
