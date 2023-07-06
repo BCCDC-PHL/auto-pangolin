@@ -26,6 +26,7 @@ def analyze(config):
         pipeline_short_name = pipeline['pipeline_name'].split('/')[1].replace('_', '-')
         pipeline_minor_version = '.'.join(pipeline['pipeline_version'].split('.')[0:2])
         analysis_timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        analysis_date = datetime.datetime.now().strftime('%Y-%m-%d')
         analysis_work_dir = os.path.abspath(os.path.join(base_analysis_work_dir, 'work-' + analysis_timestamp))
         analysis_trace_path = os.path.abspath(os.path.join(analysis_work_dir, 'nextflow_trace.tsv'))
         pipeline_command = [
@@ -48,6 +49,10 @@ def analyze(config):
         try:
             subprocess.run(pipeline_command, capture_output=True, check=True)
             logging.info(json.dumps({"event_type": "analysis_completed", "pipeline_command": " ".join(pipeline_command)}))
+            original_output_file_path = os.path.join(analysis_output_dir, 'pangolin_lineages.csv')
+            final_output_file_path = os.path.join(analysis_output_dir, analysis_date + '_pangolin_lineages.csv')
+            shutil.move(original_output_file_path, final_output_file_path)
+            logging.info(json.dumps({"event_type": "renamed_output_file", "original_output_file_path": original_output_file_path, "final_output_file_path": final_output_file_path}))
             shutil.rmtree(analysis_work_dir, ignore_errors=True)
             logging.info(json.dumps({"event_type": "analysis_work_dir_deleted", "analysis_work_dir_path": analysis_work_dir}))
         except subprocess.CalledProcessError as e:
