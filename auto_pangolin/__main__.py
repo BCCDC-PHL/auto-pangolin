@@ -63,9 +63,12 @@ def main():
                 analysis_datetime_today = datetime.datetime.combine(datetime.datetime.now(), analysis_time)
                 current_time = datetime.datetime.now()
                 time_diff = abs((current_time - analysis_datetime_today).total_seconds())
-                logging.info(json.dumps({"event_type": "checked_analysis_time", "current_time": str(current_time.time()), "scheduled_analysis_time": str(analysis_time), "time_diff_seconds": time_diff, "analysis_window_seconds": analysis_window, "within_analysis_window": time_diff < analysis_window}))
                 todays_output_path = os.path.join(config['analysis_output_dir'], str(today) + '_pangolin_lineages.csv')
-                if time_diff < analysis_window and not os.path.exists(todays_output_path):
+                todays_output_exists = os.path.exists(todays_output_path)
+
+                logging.info(json.dumps({"event_type": "checked_analysis_time", "current_time": str(current_time.time()), "scheduled_analysis_time": str(analysis_time), "time_diff_seconds": time_diff, "analysis_window_seconds": analysis_window, "within_analysis_window": time_diff < analysis_window, "todays_output_exists": todays_output_exists}))
+
+                if time_diff < analysis_window and not todays_output_exists:
                     core.analyze(config)
 
             if quit_when_safe:
@@ -77,6 +80,7 @@ def main():
         except KeyboardInterrupt as e:
             logging.info(json.dumps({"event_type": "quit_when_safe_enabled"}))
             quit_when_safe = True
+
 
 if __name__ == '__main__':
     main()
