@@ -47,7 +47,8 @@ def analyze(config):
         logging.info(json.dumps({"event_type": "analysis_started", "pipeline_command": " ".join(pipeline_command)}))
 
         try:
-            subprocess.run(pipeline_command, capture_output=True, check=True)
+            os.makedirs(analysis_work_dir)
+            subprocess.run(pipeline_command, capture_output=True, check=True, cwd=analysis_work_dir)
             logging.info(json.dumps({"event_type": "analysis_completed", "pipeline_command": " ".join(pipeline_command)}))
             original_output_file_path = os.path.join(analysis_output_dir, 'pangolin_lineages.csv')
             final_output_file_path = os.path.join(analysis_output_dir, analysis_date + '_pangolin_lineages.csv')
